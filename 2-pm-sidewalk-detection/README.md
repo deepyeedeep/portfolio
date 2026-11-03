@@ -8,18 +8,44 @@
 
 ## 구성
 
+```mermaid
+flowchart LR
+  subgraph DEV["킥보드 부착 장치 · Raspberry Pi 4B"]
+    CAM["CSI 카메라"] --> MDL["노면 분류 모델<br/>MobileNetV2 · QAT"]
+    MDL -->|Coral Edge TPU 추론| VOTE["최근 결과 다수결"]
+    VOTE --> GATT["BLE GATT 서버<br/>BlueZ D-Bus 직접 구현"]
+    RLY["5 V 릴레이<br/>킥보드 전원 연동"]
+  end
+  subgraph APP["Android 앱 · Kotlin, Jetpack Compose"]
+    CLI["BLE 클라이언트<br/>같은 결과가 이어질 때만 상태 변경"] --> JUDGE{"보도 주행 ·<br/>차도 반납 판단"}
+    LOC["FusedLocation 평균 속도<br/>정지 · 보행 · 주행"] --> JUDGE
+  end
+  GATT -->|notify 500 ms<br/>JSON result, reason| CLI
+  JUDGE -->|JSON| SRV[("TCP 서버")]
 ```
-[킥보드 부착 장치: Raspberry Pi 4B]
-  카메라(CSI) ─> 노면 분류 모델 (MobileNetV2, 양자화 인식 학습)
-                 └─ Coral Edge TPU USB 가속기에서 추론
-  최근 추론 결과를 다수결로 묶어 BLE GATT notify (JSON: result, reason)
-  BLE 서버는 BlueZ의 D-Bus API로 직접 구현
-  5 V 릴레이: 킥보드 전원 연동
-             │ BLE (500 ms 주기)
-[Android 앱: Kotlin, Jetpack Compose]
-  BLE 클라이언트: 노면 결과가 연속으로 같을 때만 상태를 바꿈
-  위치 정보(FusedLocation) 평균 속도로 정지 / 보행 / 주행 판단
-  보도 주행, 차도 반납 ─> TCP 서버로 JSON 전송
+
+### 통신 흐름
+
+```mermaid
+sequenceDiagram
+  participant D as Raspberry Pi 장치
+  participant A as Android 앱
+  participant S as TCP 서버
+  D->>A: BLE 광고
+  A->>D: 연결
+  D->>D: 카메라·추론 스레드 시작
+  loop 500 ms마다
+    D-->>A: notify (result, reason)
+    A->>A: 같은 결과가 이어질 때만 노면 상태 변경
+    opt 주행 중인데 노면이 보도
+      A->>S: 보도 주행 기록
+    end
+  end
+  opt 반납할 때 정지 상태이고 노면이 차도
+    A->>S: 차도 반납 기록
+  end
+  A->>D: 연결 종료
+  D->>D: 추론 정지 후 다시 광고
 ```
 
 | 구분 | 내용 |

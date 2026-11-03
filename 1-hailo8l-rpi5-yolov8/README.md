@@ -6,18 +6,23 @@ Raspberry Pi 5에 PCIe로 연결한 Hailo-8L NPU에서 YOLOv8n을 돌리기까�
 
 ## 구성
 
-```
-[PC: WSL2 Ubuntu 22.04]
-  yolov8n.pt (ultralytics, COCO2017 사전학습)
-    └─ export ─> yolov8n_float32.tflite
-         └─ Hailo Dataflow Compiler
-              parse     : NMS 앞 노드 6개에서 절단
-              optimize  : PTQ (COCO2017 1,000장 보정) + 입력 정규화 + NMS 후처리
-              compile   : yolov8n_float32.hef (hailo8l)
-                                   │
-[Raspberry Pi 5 + Hailo-8L (M.2, PCIe)]
-  hailo_pci 드라이버 (DKMS로 재설치) ─ HailoRT 4.19.0 ─ Python API
-  picamera2 (imx708) ─> 640x640 RGB ─> InferVStreams ─> NMS 결과
+```mermaid
+flowchart TB
+  subgraph PC["PC · WSL2 Ubuntu 22.04 · Hailo Dataflow Compiler"]
+    direction LR
+    A["yolov8n.pt<br/>COCO2017 사전학습"] -->|ultralytics export| B["yolov8n_float32.tflite"]
+    B -->|parse<br/>NMS 앞 노드 6개에서 절단| C["HAR"]
+    C -->|optimize<br/>PTQ · 입력 정규화 · NMS 후처리| D["양자화된 HAR"]
+    D -->|compile · hailo8l| E["yolov8n_float32.hef"]
+  end
+  subgraph RPI["Raspberry Pi 5 + Hailo-8L · M.2 PCIe"]
+    direction LR
+    F["hailo_pci 드라이버<br/>DKMS로 재설치"] --> G["HailoRT 4.19.0<br/>Python API"]
+    H["picamera2 · imx708"] -->|640×640 RGB| I["InferVStreams"]
+    G --> I
+    I --> J["NMS 결과<br/>클래스별 박스 · 점수"]
+  end
+  E -->|복사| G
 ```
 
 | 구분 | 내용 |
@@ -32,6 +37,13 @@ Raspberry Pi 5에 PCIe로 연결한 Hailo-8L NPU에서 YOLOv8n을 돌리기까�
 ## 한 일
 
 - YOLOv8n을 TFLite로 내보내고, [Netron](https://netron.app/)으로 그래프를 확인해 NMS 직전의 출력 노드 6개에서 파싱을 끊었습니다. 파싱 결과 그래프는 [docs/yolov8n_parsed.svg](docs/yolov8n_parsed.svg)에 있습니다.
+
+  <details>
+  <summary>파싱 결과 그래프 펼치기 (세로로 긴 이미지)</summary>
+
+  <img src="docs/yolov8n_parsed.svg" width="480" alt="Hailo Dataflow Compiler로 파싱한 YOLOv8n 그래프">
+  </details>
+
 - COCO2017 train에서 무작위로 1,000장을 뽑아 보정 데이터셋을 만들었습니다. 그 평균과 표준편차로 입력 정규화 레이어를, model script의 `nms_postprocess`로 NMS 후처리를 붙여 정수 양자화(PTQ)한 뒤 Hailo-8L용 HEF로 컴파일했습니다.
 - Raspberry Pi 5에서 OS에 미리 들어 있던 드라이버를 제거하고, HailoRT와 같은 버전의 드라이버를 DKMS 패키지로 다시 설치했습니다. 모듈 파라미터를 지정해 적재한 뒤 `lspci`, `lsmod`, `dmesg`로 장치 인식과 펌웨어 로드를 확인했습니다.
 - HailoRT Python API로 HEF를 올려 입출력 스트림과 NMS 출력 형식을 확인하고, 카메라 프레임을 연속으로 추론하며 프레임별 지연시간과 FPS를 측정했습니다.
