@@ -13,7 +13,7 @@ flowchart LR
   subgraph DEV["킥보드 부착 장치 · Raspberry Pi 4B"]
     CAM["CSI 카메라"] --> MDL["노면 분류 모델<br/>MobileNetV2 · QAT"]
     MDL -->|Coral Edge TPU 추론| VOTE["최근 결과 다수결"]
-    VOTE --> GATT["BLE GATT 서버<br/>BlueZ D-Bus 직접 구현"]
+    VOTE --> GATT["BLE GATT 서버<br/>BlueZ by DBus"]
     RLY["5 V 릴레이<br/>킥보드 전원 연동"]
   end
   subgraph APP["Android 앱 · Kotlin, Jetpack Compose"]
@@ -81,9 +81,6 @@ sequenceDiagram
 ## 이 레포에 넣지 않은 것
 
 - 학습 데이터: 공개 데이터셋(AI Hub 인도 보행 영상)을 가공해 썼고, 재배포가 허용되지 않아 넣지 않았습니다.
-- 학습된 모델 파일(.tflite)
-- 앱의 글꼴과 배경·로고 이미지: 라이선스를 확인하지 못해 뺐습니다.
-- 서버 코드
 
 ## 다음 단계
 
