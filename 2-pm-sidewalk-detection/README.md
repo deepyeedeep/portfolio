@@ -60,7 +60,7 @@ sequenceDiagram
 | 폴더 | 내용 |
 |---|---|
 | [device/](device/README.md) | 라즈베리파이 장치 코드: 카메라 추론, BLE GATT 서버 |
-| [app/](app/README.md) | 안드로이드 앱 소스 |
+| [app/](app/README.md) | 안드로이드 앱 소스. MVVM 구조도, 화면 전환, 클래스 다이어그램, MVVM 자체 점검 |
 | [model/](model/README.md) | 노면 분류 모델 학습과 양자화 (정리 중) |
 
 ## 막힌 곳과 해결

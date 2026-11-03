@@ -31,7 +31,7 @@
 - BlueZ D-Bus API를 클래스로 감싸 BLE GATT 서버를 직접 구현, 재연결 시 추론 스레드를 새로 만들도록 수정
 - 앱은 BLE 노면 결과와 위치 기반 속도로 정지·보행·주행을 판단해 보도 주행과 차도 반납을 서버에 기록
 
-**Technologies**: Raspberry Pi 4B, Coral USB Accelerator, TensorFlow/Keras, tfmot (QAT), tflite_runtime, BlueZ D-Bus, Python, Kotlin, Jetpack Compose, Android BLE API
+**Technologies**: Raspberry Pi 4B, Coral USB Accelerator, TensorFlow/Keras, tfmot (QAT), tflite_runtime, BlueZ D-Bus, Python, Kotlin, Jetpack Compose, MVVM (ViewModel, StateFlow), Android BLE API
 
 ---
 
