@@ -1,0 +1,3 @@
+== partMBM 8-bit exhaustive signed: pass=65536 fail=0
+== partMBM 16-bit random signed: pass=20000 fail=0
+== AC multiply op (S=11, Cin=1), low 16 bits: pass=20000 fail=0
