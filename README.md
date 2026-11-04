@@ -10,6 +10,7 @@
 - **Embedded Linux**: Raspberry Pi 4B/5, PCIe 가속기 드라이버 DKMS 재설치와 모듈 파라미터, udev 규칙, BlueZ D-Bus GATT 서버
 - **Sensors & Connectivity**: CSI 카메라(picamera2), I2C 가속도 센서, BLE GATT notify, TCP
 - **Mobile**: Kotlin, Jetpack Compose 기반 BLE 클라이언트 앱
+- **Digital Design**: Verilog 16비트 데이터패스(ALU, carry-select 가산기, 레지스터 파일), 자가 검증 테스트벤치(ModelSim)
 
 ---
 
@@ -33,6 +34,14 @@
 
 **Technologies**: Raspberry Pi 4B, Coral USB Accelerator, TensorFlow/Keras, tfmot (QAT), tflite_runtime, BlueZ D-Bus, Python, Kotlin, Jetpack Compose, MVVM (ViewModel, StateFlow), Android BLE API
 
+### 3. [16비트 CPU 데이터패스: Verilog ALU · 가산기 · 레지스터 파일 (2019)](./3-verilog-cpu-datapath/)
+디지털시스템설계 팀 과제로 만든 마이크로프로그램 CPU 중 제가 작성한 데이터패스 모듈만 정리했습니다:
+- 산술부(B 입력 선택 + carry-select 가산기)와 논리부로 16개 연산을 하는 ALU, 시프터, 레지스터 파일, V·C·N·Z 플래그 설계
+- 작성한 ALU가 수정 없이 팀 최종 CPU에 들어가 DE2-115 FPGA에서 동작
+- 2026년 자가 검증 테스트벤치로 재검토: ALU 32,000건 전부 통과, 시프터 비트 범위 버그 2건 발견과 원인 기록
+
+**Technologies**: Verilog HDL, Quartus Prime, ModelSim, DE2-115 (Cyclone IV E)
+
 ---
 
 ## Technical Skills
@@ -50,6 +59,10 @@
 - **Languages**: C, Python, Kotlin
 - **Interfaces**: I2C, BLE GATT, TCP 소켓
 
+### Digital Design
+- **HDL**: Verilog (조합·순차 회로, generate 문, 파라미터화된 모듈)
+- **Tools**: Quartus Prime, ModelSim, 자가 검증 테스트벤치
+
 ---
 
 ## 이 레포에 넣지 않은 것
@@ -58,4 +71,4 @@
 
 ## AI 활용
 
-코드는 2024년에 직접 작성했고, 이 레포의 문서 정리, 다이어그램, 코드 리뷰에는 Claude Code를 활용했습니다.
+코드는 2019~2024년에 직접 작성했고, 이 레포의 문서 정리, 다이어그램, 코드 리뷰, 테스트벤치 작성에는 Claude Code를 활용했습니다.

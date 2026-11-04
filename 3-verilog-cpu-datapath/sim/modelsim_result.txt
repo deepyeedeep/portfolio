@@ -1,0 +1,26 @@
+== ALU: 16 operations x 2000 random vectors ==
+  GS=0000  pass=2000 fail=0
+  GS=0001  pass=2000 fail=0
+  GS=0010  pass=2000 fail=0
+  GS=0011  pass=2000 fail=0
+  GS=0100  pass=2000 fail=0
+  GS=0101  pass=2000 fail=0
+  GS=0110  pass=2000 fail=0
+  GS=0111  pass=2000 fail=0
+  GS=1000  pass=2000 fail=0
+  GS=1001  pass=2000 fail=0
+  GS=1010  pass=2000 fail=0
+  GS=1011  pass=2000 fail=0
+  GS=1100  pass=2000 fail=0
+  GS=1101  pass=2000 fail=0
+  GS=1110  pass=2000 fail=0
+  GS=1111  pass=2000 fail=0
+== Funit flags (V, C, N, Z) on A+B and A-B ==
+  flags  pass=4000 fail=0
+== Shifter (expected: 01 = logical right, 10 = logical left) ==
+  HS=00  pass=500 fail=0
+   mismatch HS=01 B=e492 -> 0001 (expected 7249)
+  HS=01  pass=0 fail=500
+   mismatch HS=10 B=e730 -> 4e60 (expected ce60)
+  HS=10  pass=241 fail=259
+== ALU total arithmetic/logic failures: 0 ==
